@@ -1,0 +1,20 @@
+$kind: http-request
+description: ""
+url: http://127.0.0.1:8001/api/payments/
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"user_id\": 1,\r
+
+    \  \"card_id\": 2,\r
+
+    \  \"amount\": 500.00\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_0iu3}}"
+order: 4503598635461663

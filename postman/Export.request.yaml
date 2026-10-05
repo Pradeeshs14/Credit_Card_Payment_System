@@ -1,0 +1,9 @@
+$kind: http-request
+description: ""
+url: http://127.0.0.1:8000/api/transactions/export-csv/
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_06kr}}"
+order: 4503535006146748

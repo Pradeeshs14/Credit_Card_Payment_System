@@ -1,0 +1,20 @@
+$kind: http-request
+description: ""
+url: http://127.0.0.1:8000/api/transactions/create/
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"card\": 2,\r
+
+    \  \"amount\": 500.00,\r
+
+    \  \"status\": \"PENDING\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_0ytg}}"
+order: 4498115938551399

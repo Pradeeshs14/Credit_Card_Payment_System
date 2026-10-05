@@ -1,0 +1,12 @@
+$kind: http-request
+description: ""
+url: http://127.0.0.1:8000/api/transactions/?start_date=2026-10-01&end_date=2026-10-01
+method: GET
+queryParams:
+  start_date: 2026-10-01
+  end_date: 2026-10-01
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_05n8}}"
+order: 4503508175233368

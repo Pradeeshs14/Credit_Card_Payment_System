@@ -1,0 +1,66 @@
+$kind: collection
+description: |-
+  Credit Card Payment System API
+
+  This Postman collection contains the APIs developed and tested for the Credit Card Payment System.
+
+  The collection covers:
+
+  - User authentication and logout
+      
+  - User profile
+      
+  - Credit card management
+      
+  - Transaction creation and history
+      
+  - Transaction filtering by status, amount, and date
+      
+  - Transaction CSV export
+      
+  - Admin transaction summary
+      
+  - Admin activity logs
+      
+  - Payment processing
+      
+  - Individual payment retrieval
+      
+
+  Backend services:
+
+  - Django REST API: [http://127.0.0.1:8000](http://127.0.0.1:8000/)
+      
+  - FastAPI Payment API: [http://127.0.0.1:8001](http://127.0.0.1:8001/)
+      
+
+  Authentication:  
+  Most protected endpoints use Bearer Token authentication with the JWT access token generated during login.
+variables:
+  - key: json_web_token_19hi
+    secret: true
+    disabled: false
+  - key: json_web_token_196z
+    secret: true
+    disabled: false
+  - key: json_web_token_1909
+    secret: true
+    disabled: false
+  - key: json_web_token_16lf
+    secret: true
+    disabled: false
+  - key: json_web_token_0ytg
+    secret: true
+    disabled: false
+  - key: json_web_token_05n8
+    secret: true
+    disabled: false
+  - key: json_web_token_06kr
+    secret: true
+    disabled: false
+  - key: json_web_token_0iu3
+    secret: true
+    disabled: false
+  - key: json_web_token_1cyv
+    secret: true
+    disabled: false

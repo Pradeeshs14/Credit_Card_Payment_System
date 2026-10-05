@@ -1,0 +1,11 @@
+$kind: http-request
+description: ""
+url: http://127.0.0.1:8000/api/transactions/?amount=500
+method: GET
+queryParams:
+  amount: "500"
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_05n8}}"
+order: 4503488935686424

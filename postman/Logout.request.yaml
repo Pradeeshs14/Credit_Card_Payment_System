@@ -1,0 +1,16 @@
+$kind: http-request
+description: ""
+url: http://127.0.0.1:8000/api/users/logout/
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"refresh\": \"{{json_web_token_1909}}\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_196z}}"
+order: 1424778365074733

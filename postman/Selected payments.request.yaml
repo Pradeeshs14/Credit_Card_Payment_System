@@ -1,0 +1,9 @@
+$kind: http-request
+description: ""
+url: http://127.0.0.1:8001/api/payments/6
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_1cyv}}"
+order: 4503599182419062

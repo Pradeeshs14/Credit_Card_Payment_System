@@ -1,0 +1,9 @@
+$kind: http-request
+description: ""
+url: http://127.0.0.1:8000/api/cards/1/
+method: DELETE
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_0ytg}}"
+order: 4497153063105313

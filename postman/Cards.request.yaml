@@ -1,0 +1,9 @@
+$kind: http-request
+description: ""
+url: http://127.0.0.1:8000/api/cards/
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_16lf}}"
+order: 4047081435411088
