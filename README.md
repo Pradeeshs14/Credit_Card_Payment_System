@@ -1,483 +1,363 @@
-\# Credit Card Payment System
+# Credit Card Payment System
 
 A full-stack credit card payment simulation system built using React, Django REST Framework, FastAPI, MySQL, and Docker.
 
-\## Technologies Used
+## Technologies Used
 
-\* \*\*Frontend:\*\* React, Vite, Tailwind CSS
+* **Frontend:** React, Vite, Tailwind CSS
+* **Backend:** Django REST Framework
+* **Payment Service:** FastAPI
+* **Database:** MySQL 8.0
+* **Authentication:** JWT
+* **API Documentation:** Swagger / OpenAPI
+* **Testing:** Django Test Framework, Pytest, Coverage
+* **Containerization:** Docker, Docker Compose
+* **API Testing:** Postman
 
-\* \*\*Backend:\*\* Django REST Framework
+## Project Features
 
-\* \*\*Payment Service:\*\* FastAPI
+### User Authentication
 
-\* \*\*Database:\*\* MySQL 8.0
+* User registration
+* JWT login
+* JWT token refresh
+* Logout
+* Protected API routes
+* Password hashing
 
-\* \*\*Authentication:\*\* JWT
+### Card Management
 
-\* \*\*API Documentation:\*\* Swagger / OpenAPI
+* Add credit/debit cards
+* View saved cards
+* Delete saved cards
+* Card number validation
+* Expiry month/year validation
+* Actual card numbers are not stored
+* Only masked card number and last four digits are stored
+* CVV is not stored
 
-\* \*\*Testing:\*\* Django Test Framework, Pytest, Coverage
+### Payment Processing
 
-\* \*\*Containerization:\*\* Docker, Docker Compose
+* FastAPI payment service
+* Payment starts with `PENDING` status
+* Payment is simulated as `SUCCESS` or `FAILED`
+* Unique transaction ID generation
+* Payment data synchronized with Django
 
-\* \*\*API Testing:\*\* Postman
+### Transaction Management
 
-\## Project Features
+* View transaction history
+* Filter transactions by status
+* Filter transactions by amount
+* Filter transactions by date
+* Create transactions
+* Admin CSV export
+* Daily payment summary
 
-\### User Authentication
+### Admin
 
-\* User registration
+* Django Admin interface
+* User management
+* Card management
+* Transaction management
+* Admin activity logs
+* Payment summary dashboard
 
-\* JWT login
+### Frontend
 
-\* JWT token refresh
+* Registration page
+* Login page
+* User Dashboard
+* Add Card page
+* Make Payment page
+* Transaction History page
+* Admin Dashboard
 
-\* Logout
-
-\* Protected API routes
-
-\* Password encryption
-
-\### Card Management
-
-\* Add credit/debit cards
-
-\* View saved cards
-
-\* Delete saved cards
-
-\* Card number validation
-
-\* Expiry month validation
-
-\* Card numbers are not stored
-
-\* Only masked card number and last four digits are stored
-
-\* CVV is not stored
-
-\### Payment Processing
-
-\* FastAPI payment service
-
-\* Payment starts with `PENDING` status
-
-\* Payment is simulated as `SUCCESS` or `FAILED`
-
-\* Unique transaction ID generation
-
-\* Payment data synchronized with Django
-
-\### Transaction Management
-
-\* View transaction history
-
-\* Filter transactions by status
-
-\* Filter transactions by amount
-
-\* Filter transactions by date
-
-\* Create transactions
-
-\* Admin CSV export
-
-\* Daily payment summary
-
-\### Admin Panel
-
-\* Manage users
-
-\* View saved cards
-
-\* View transactions
-
-\* View payment summaries
-
-\* View admin activity logs
-
-\### Frontend
-
-\* Registration page
-
-\* Login page
-
-\* Dashboard
-
-\* Add Card page
-
-\* Make Payment page
-
-\* Transaction History page
-
-\* Admin Dashboard
-
-\## Project Structure
+## Project Structure
 
 Credit_Card_Payment_System/
-
 │
-
 ├── backend/
-
-│ ├── admin_logs/
-
-│ ├── cards/
-
-│ ├── config/
-
-│ ├── payment_service/
-
-│ ├── transactions/
-
-│ ├── users/
-
-│ ├── Dockerfile
-
-│ ├── manage.py
-
-│ └── requirements.txt
-
+│   ├── admin_logs/
+│   ├── cards/
+│   ├── config/
+│   ├── payment_service/
+│   ├── transactions/
+│   ├── users/
+│   ├── Dockerfile
+│   ├── manage.py
+│   └── requirements.txt
 │
-
 ├── frontend/
-
-│ ├── public/
-
-│ ├── src/
-
-│ │ ├── pages/
-
-│ │ ├── services/
-
-│ │ ├── App.jsx
-
-│ │ └── main.jsx
-
-│ ├── Dockerfile
-
-│ ├── package.json
-
-│ └── vite.config.js
-
+│   ├── public/
+│   ├── src/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── Dockerfile
+│   ├── package.json
+│   └── vite.config.js
 │
-
+├── docs/
+├── credit_card_payment_db.sql
 ├── docker-compose.yml
-
 ├── .gitignore
-
 └── README.md
 
-\## Database
 
-The application uses MySQL with the following main data:
+## Database
 
-\* Users
+The application uses MySQL 8.0 with the following main data:
 
-\* Cards
+* Users
+* Cards
+* Transactions
+* Payments
+* Admin Logs
 
-\* Transactions
-
-\* Payments
-
-\* Admin Logs
-
-\### Card Security
+### Card Security
 
 Actual card numbers and CVV values are not stored in the database.
 
 The card service stores:
 
-\* Masked card number
+* Masked card number
+* Last four digits
+* Card type
+* Expiry month
+* Expiry year
 
-\* Last four digits
+## API Endpoints
 
-\* Card type
-
-\* Expiry month
-
-\* Expiry year
-
-\## API Endpoints
-
-\### Authentication
+### Authentication
 
 POST /api/users/register/
-
 POST /api/users/login/
-
 POST /api/users/token/refresh/
-
 POST /api/users/logout/
+GET  /api/users/me/
 
-GET /api/users/me/
 
-\### Cards
+### Cards
 
-GET /api/cards/
-
-POST /api/cards/
-
+GET    /api/cards/
+POST   /api/cards/
 DELETE /api/cards/{id}/
 
-\### Transactions
 
-GET /api/transactions/
+### Transactions
 
+GET  /api/transactions/
 POST /api/transactions/create/
-
 POST /api/transactions/sync/
+GET  /api/transactions/export-csv/
+GET  /api/transactions/admin/summary/
 
-GET /api/transactions/export-csv/
 
-GET /api/transactions/admin/summary/
+### Admin Logs
 
-\### Admin Logs
 
 GET /api/admin-logs/
 
-\### FastAPI Payment Service
+
+### FastAPI Payment Service
 
 POST /api/payments/
+GET  /api/payments/{payment_id}
 
-GET /api/payments/{payment_id}
 
-\## API Documentation
+## API Documentation
 
-\### Django Swagger
+### Django Swagger
+
 
 http://127.0.0.1:8000/api/docs/
 
-\### Django OpenAPI Schema
+
+### Django OpenAPI Schema
+
 
 http://127.0.0.1:8000/api/schema/
 
-\### FastAPI Swagger
+
+### FastAPI Swagger
 
 http://127.0.0.1:8001/docs
 
-\## Running with Docker
+
+## Running with Docker
 
 Make sure Docker Desktop is running.
 
 From the project root:
 
 ```powershell
-
 docker compose up -d
 
-```
 
 Check the containers:
 
 ```powershell
-
 docker compose ps
 
-```
 
-The services use:
+### Services
 
-MySQL → localhost:3307
-
-Django → localhost:8000
-
-FastAPI → localhost:8001
-
-Frontend → localhost:5173
+| Service  | Address        |
+| -------- | -------------- |
+| MySQL    | localhost:3307 |
+| Django   | localhost:8000 |
+| FastAPI  | localhost:8001 |
+| Frontend | localhost:5173 |
 
 Run Django migrations:
 
 ```powershell
-
 docker compose exec django python manage.py migrate
 
-```
 
 Run Django system checks:
 
 ```powershell
-
 docker compose exec django python manage.py check
 
-```
 
 Stop the containers:
 
 ```powershell
-
 docker compose down
 
-```
 
-\## Local Development
+## Local Development
 
-\### Django
+### Django
 
 From the `backend` directory:
 
 ```powershell
-
 python manage.py runserver
 
-```
 
-\### FastAPI
+### FastAPI
 
 From the project root:
 
 ```powershell
+uvicorn app.main:app --reload --app-dir backend/payment_service --port 8001
 
-uvicorn app.main:app --reload --app-dir payment\_service --port 8001
 
-```
-
-\### Frontend
+### Frontend
 
 From the `frontend` directory:
 
 ```powershell
-
 npm install
-
 npm run dev
 
-```
 
-\## Testing
+## Testing
 
 The project includes automated tests for:
 
-\* User authentication
+* User authentication
+* Password encryption
+* JWT authentication
+* Card management
+* Card validation
+* Card number storage protection
+* Transaction history
+* Transaction filtering
+* CSV export
+* Admin payment summary
+* Payment success/failure
+* Payment validation
+* Payment retrieval
 
-\* Password encryption
-
-\* JWT authentication
-
-\* Card management
-
-\* Card validation
-
-\* Card number storage protection
-
-\* Transaction history
-
-\* Transaction filtering
-
-\* CSV export
-
-\* Admin payment summary
-
-\* Payment success/failure
-
-\* Payment validation
-
-\* Payment retrieval
-
-\### Django Tests
+### Django Tests
 
 ```powershell
-
 python manage.py test
 
-```
 
-\### FastAPI Tests
-
-```powershell
-
-pytest payment\_service/tests/test\_payments.py -v
-
-```
-
-\### Coverage
+### FastAPI Tests
 
 ```powershell
+pytest payment_service/tests/test_payments.py -v
 
+
+### Coverage
+
+```powershell
 coverage run manage.py test
-
 coverage report
 
-```
 
-Current test coverage:
+**Current test coverage: 94%**
 
-94%
-
-\## Security
+## Security
 
 The application implements:
 
-\* JWT authentication
+* JWT authentication
+* Protected API endpoints
+* Django password hashing
+* Input validation
+* Card number validation
+* No CVV storage
+* No full card number storage
+* Masked card information
+* Django ORM for database operations
+* Internal API key for payment-to-transaction synchronization
 
-\* Protected API endpoints
-
-\* Django password hashing
-
-\* Input validation
-
-\* Card number validation
-
-\* No CVV storage
-
-\* No full card number storage
-
-\* Masked card information
-
-\* Django ORM for database operations
-
-\* Internal API key for payment-to-transaction synchronization
-
-\## Docker Services
+## Docker Services
 
 The Docker Compose environment contains:
 
-mysql
-
-django
-
-fastapi
-
-frontend
+* MySQL
+* Django
+* FastAPI
+* React frontend
 
 Docker images:
 
-credit-card-django
+* credit-card-django
+* credit-card-fastapi
+* credit-card-frontend
 
-credit-card-fastapi
+## Submission Files
 
-credit-card-frontend
+The project includes:
 
-\## Project Status
+* credit_card_payment_db.sql — MySQL database dump
+* docs/ — project documentation and supporting files
+* Postman API collection
+* UI screenshots
+* Docker configuration
+* Automated tests
+
+## Project Status
 
 The following major components are completed:
 
-\* User Authentication
+* User Authentication
+* Card Management
+* Payment Processing
+* Transaction Management
+* Admin Panel
+* Admin Logs
+* React Frontend
+* Django API Documentation
+* FastAPI API Documentation
+* Automated Testing
+* Docker Setup
+* Database Dump
+* Postman API Collection
+* UI Screenshots
+* Git/GitHub Setup
 
-\* Card Management
-
-\* Payment Processing
-
-\* Transaction Management
-
-\* Admin Panel
-
-\* Admin Logs
-
-\* React Frontend
-
-\* Django API Documentation
-
-\* FastAPI API Documentation
-
-\* Automated Testing
-
-\* Docker Setup
-
-\* Git/GitHub Setup
-
-\## Repository
+## Repository
 
 GitHub:
 
-https://github.com/Pradeeshs14/Credit\_Card\_Payment\_System
+https://github.com/Pradeeshs14/Credit_Card_Payment_System
