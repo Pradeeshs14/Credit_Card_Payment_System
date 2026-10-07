@@ -27,6 +27,12 @@ class Card(models.Model):
         max_length=4
     )
 
+    credit_limit = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=50000.00
+    )
+
     expiry_month = models.PositiveSmallIntegerField()
 
     expiry_year = models.PositiveSmallIntegerField()
@@ -37,4 +43,3 @@ class Card(models.Model):
 
     def __str__(self):
         return f"{self.card_type} **** {self.last_four_digits}"
-

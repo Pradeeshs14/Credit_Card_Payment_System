@@ -1,46 +1,42 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../services/api'
+import api, { dashboardApi } from '../services/api'
 
 function Dashboard() {
   const navigate = useNavigate()
 
-  const [cardCount, setCardCount] = useState(0)
-  const [transactionCount, setTransactionCount] = useState(0)
-  const [successfulCount, setSuccessfulCount] = useState(0)
+  const [dashboardData, setDashboardData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
         const token = localStorage.getItem('access_token')
 
-        const [cardsResponse, transactionsResponse] = await Promise.all([
-          api.get('/cards/', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
+        if (!token) {
+          setError('Your session has expired. Please login again.')
+          setLoading(false)
+          return
+        }
 
-          api.get('/transactions/', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-        ])
+        const response = await dashboardApi.get('/dashboard/summary', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
 
-        const cards = cardsResponse.data
-        const transactions = transactionsResponse.data
-
-        setCardCount(cards.length)
-        setTransactionCount(transactions.length)
-
-        const successfulPayments = transactions.filter(
-          (transaction) => transaction.status === 'SUCCESS'
-        )
-
-        setSuccessfulCount(successfulPayments.length)
+        setDashboardData(response.data)
       } catch (error) {
         console.error('Failed to load dashboard data:', error)
+
+        if (error.response?.status === 401) {
+          setError('Your session has expired. Please login again.')
+        } else {
+          setError('Unable to load dashboard data. Please try again.')
+        }
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -51,6 +47,33 @@ function Dashboard() {
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
     navigate('/')
+  }
+
+  const formatCurrency = (amount) => {
+    return `₹${Number(amount || 0).toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`
+  }
+
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    })
+  }
+
+  const getStatusClass = (status) => {
+    if (status === 'SUCCESS') {
+      return 'bg-green-500/10 text-green-400 border border-green-500/20'
+    }
+
+    if (status === 'FAILED') {
+      return 'bg-red-500/10 text-red-400 border border-red-500/20'
+    }
+
+    return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
   }
 
   return (
@@ -80,42 +103,146 @@ function Dashboard() {
         </h2>
 
         <p className="text-slate-400 mb-8">
-          Manage your cards and payments
+          Track your credit card spending and transactions
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-            <h3 className="text-slate-400">
-              Saved Cards
-            </h3>
-
-            <p className="text-3xl font-bold mt-2">
-              {cardCount}
-            </p>
+        {error && (
+          <div className="mb-6 bg-red-500/10 border border-red-500/30 text-red-400 px-5 py-4 rounded-xl">
+            {error}
           </div>
+        )}
 
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-            <h3 className="text-slate-400">
-              Total Transactions
-            </h3>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-            <p className="text-3xl font-bold mt-2">
-              {transactionCount}
-            </p>
+            {[1, 2, 3, 4].map((item) => (
+              <div
+                key={item}
+                className="bg-slate-900 border border-slate-800 p-6 rounded-2xl animate-pulse"
+              >
+                <div className="h-4 w-28 bg-slate-800 rounded mb-4"></div>
+                <div className="h-8 w-36 bg-slate-800 rounded"></div>
+              </div>
+            ))}
+
           </div>
+        ) : dashboardData ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-            <h3 className="text-slate-400">
-              Successful Payments
-            </h3>
+              <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                <h3 className="text-slate-400 text-sm">
+                  Total Spent
+                </h3>
 
-            <p className="text-3xl font-bold text-green-400 mt-2">
-              {successfulCount}
-            </p>
-          </div>
+                <p className="text-3xl font-bold mt-3">
+                  {formatCurrency(dashboardData.total_amount_spent)}
+                </p>
+              </div>
 
-        </div>
+              <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                <h3 className="text-slate-400 text-sm">
+                  Available Credit
+                </h3>
+
+                <p className="text-3xl font-bold text-blue-400 mt-3">
+                  {formatCurrency(dashboardData.available_credit_limit)}
+                </p>
+              </div>
+
+              <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                <h3 className="text-slate-400 text-sm">
+                  Total Transactions
+                </h3>
+
+                <p className="text-3xl font-bold mt-3">
+                  {dashboardData.total_transactions}
+                </p>
+              </div>
+
+              <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                <h3 className="text-slate-400 text-sm">
+                  This Month Spending
+                </h3>
+
+                <p className="text-3xl font-bold text-purple-400 mt-3">
+                  {formatCurrency(dashboardData.current_month_spending)}
+                </p>
+              </div>
+
+            </div>
+
+            <div className="mt-8 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+
+              <div className="p-6 border-b border-slate-800">
+                <h3 className="text-xl font-bold">
+                  Recent Transactions
+                </h3>
+
+                <p className="text-slate-400 text-sm mt-1">
+                  Your latest 5 transactions
+                </p>
+              </div>
+
+              {dashboardData.last_5_transactions.length === 0 ? (
+                <div className="p-8 text-center text-slate-400">
+                  No transactions found.
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+
+                  <table className="w-full">
+
+                    <thead>
+                      <tr className="text-left text-slate-400 text-sm border-b border-slate-800">
+                        <th className="px-6 py-4">Amount</th>
+                        <th className="px-6 py-4">Card</th>
+                        <th className="px-6 py-4">Date</th>
+                        <th className="px-6 py-4">Status</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {dashboardData.last_5_transactions.map(
+                        (transaction, index) => (
+                          <tr
+                            key={`${transaction.date}-${index}`}
+                            className="border-b border-slate-800 last:border-b-0 hover:bg-slate-800/50 transition"
+                          >
+                            <td className="px-6 py-4 font-semibold">
+                              {formatCurrency(transaction.amount)}
+                            </td>
+
+                            <td className="px-6 py-4 text-slate-300">
+                              {transaction.masked_card_number}
+                            </td>
+
+                            <td className="px-6 py-4 text-slate-400">
+                              {formatDate(transaction.date)}
+                            </td>
+
+                            <td className="px-6 py-4">
+                              <span
+                                className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${getStatusClass(
+                                  transaction.status
+                                )}`}
+                              >
+                                {transaction.status}
+                              </span>
+                            </td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+
+                  </table>
+
+                </div>
+              )}
+
+            </div>
+          </>
+        ) : null}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
 
@@ -166,4 +293,3 @@ function Dashboard() {
 }
 
 export default Dashboard
-

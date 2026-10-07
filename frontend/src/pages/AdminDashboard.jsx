@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 import api from '../services/api'
 
 function AdminDashboard() {
+  const navigate = useNavigate()
+
   const [summary, setSummary] = useState({
     total_payments: 0,
     successful_payments: 0,
@@ -15,9 +19,27 @@ function AdminDashboard() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    const loadSummary = async () => {
+    const loadAdminDashboard = async () => {
       try {
         const token = localStorage.getItem('access_token')
+
+        if (!token) {
+          navigate('/admin-login')
+          return
+        }
+
+        const userResponse = await api.get('/users/me/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (!userResponse.data.is_staff) {
+          localStorage.removeItem('access_token')
+          localStorage.removeItem('refresh_token')
+          navigate('/admin-login')
+          return
+        }
 
         const response = await api.get(
           '/transactions/admin/summary/',
@@ -30,27 +52,53 @@ function AdminDashboard() {
 
         setSummary(response.data)
       } catch (error) {
-        console.error('Failed to load admin summary:', error)
+        console.error('Failed to load admin dashboard:', error)
+
+        if (
+          error.response?.status === 401 ||
+          error.response?.status === 403
+        ) {
+          localStorage.removeItem('access_token')
+          localStorage.removeItem('refresh_token')
+          navigate('/admin-login')
+          return
+        }
+
         setError('Failed to load payment summary.')
       } finally {
         setLoading(false)
       }
     }
 
-    loadSummary()
-  }, [])
+    loadAdminDashboard()
+  }, [navigate])
+
+  const handleLogout = () => {
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
+    navigate('/admin-login')
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
 
       <nav className="bg-slate-900 border-b border-slate-800 px-6 py-4">
-        <div className="max-w-7xl mx-auto">
+
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
 
           <h1 className="text-xl font-bold">
             Admin Dashboard
           </h1>
 
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg font-semibold transition"
+          >
+            Logout
+          </button>
+
         </div>
+
       </nav>
 
       <main className="p-6 max-w-7xl mx-auto">
@@ -134,6 +182,7 @@ function AdminDashboard() {
         )}
 
       </main>
+
     </div>
   )
 }

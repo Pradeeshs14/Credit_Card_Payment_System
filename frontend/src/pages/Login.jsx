@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+
 import api from '../services/api'
 
 function Login() {
@@ -38,7 +39,9 @@ function Login() {
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+
       <div className="w-full max-w-md bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl">
+
         <h1 className="text-3xl font-bold text-center text-white mb-2">
           Welcome Back
         </h1>
@@ -48,7 +51,9 @@ function Login() {
         </p>
 
         <form onSubmit={handleLogin} className="space-y-5">
+
           <div>
+
             <label className="block mb-2 text-sm font-medium text-slate-300">
               Username
             </label>
@@ -61,9 +66,11 @@ function Login() {
               required
               className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+
           </div>
 
           <div>
+
             <label className="block mb-2 text-sm font-medium text-slate-300">
               Password
             </label>
@@ -76,6 +83,7 @@ function Login() {
               required
               className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+
           </div>
 
           {error && (
@@ -91,10 +99,12 @@ function Login() {
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
+
         </form>
 
         <p className="text-center text-slate-400 text-sm mt-6">
           Don't have an account?{' '}
+
           <button
             type="button"
             onClick={() => navigate('/register')}
@@ -103,9 +113,24 @@ function Login() {
             Register
           </button>
         </p>
+
+        <div className="border-t border-slate-800 mt-6 pt-6">
+
+          <button
+            type="button"
+            onClick={() => navigate('/admin-login')}
+            className="w-full text-slate-400 hover:text-white text-sm transition"
+          >
+            Admin Login
+          </button>
+
+        </div>
+
       </div>
+
     </div>
   )
 }
 
 export default Login
+

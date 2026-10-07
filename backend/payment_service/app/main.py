@@ -1,9 +1,9 @@
-from fastapi import FastAPI # type: ignore
-from fastapi.middleware.cors import CORSMiddleware # type: ignore
+from fastapi import FastAPI  # type: ignore
+from fastapi.middleware.cors import CORSMiddleware  # type: ignore
 
-from app.database import Base, engine # type: ignore
-from app.models.payment import Payment # type: ignore
-from app.routers import payments # type: ignore
+from app.database import Base, engine  # type: ignore
+from app.models.payment import Payment  # type: ignore
+from app.routers import payments, dashboard  # type: ignore
 
 INTERNAL_API_KEY = "credit-payment-internal-2026"
 
@@ -16,7 +16,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-	"http://127.0.0.1:5173",
+        "http://127.0.0.1:5173",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -30,6 +30,13 @@ app.include_router(
     prefix="/api/payments",
     tags=["Payments"]
 )
+
+app.include_router(
+    dashboard.router,
+    prefix="/api/dashboard",
+    tags=["Dashboard"]
+)
+
 
 @app.get("/")
 def root():
