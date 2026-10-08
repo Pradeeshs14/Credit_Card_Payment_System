@@ -32,7 +32,7 @@ class Card(models.Model):
         decimal_places=2,
         default=50000.00
     )
-
+    is_blocked = models.BooleanField(default=False)
     expiry_month = models.PositiveSmallIntegerField()
 
     expiry_year = models.PositiveSmallIntegerField()

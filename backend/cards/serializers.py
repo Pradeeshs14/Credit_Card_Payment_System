@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers # type: ignore
 
 from .models import Card
 
@@ -71,3 +71,54 @@ class CardSerializer(serializers.ModelSerializer):
 
         return Card.objects.create(**validated_data)
 
+class AdminCardBlockSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Card
+        fields = ['is_blocked']
+
+class AdminCardSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        source='user.username',
+        read_only=True
+    )
+
+    email = serializers.EmailField(
+        source='user.email',
+        read_only=True
+    )
+
+    class Meta:
+        model = Card
+        fields = [
+            'id',
+            'username',
+            'email',
+            'card_type',
+            'masked_card_number',
+            'last_four_digits',
+            'credit_limit',
+            'is_blocked',
+            'expiry_month',
+            'expiry_year',
+            'created_at',
+        ]
+
+        read_only_fields = fields
+
+class AdminCreditLimitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Card
+        fields = ['credit_limit']
+
+    def validate_credit_limit(self, value):
+        if value <= 0:
+            raise serializers.ValidationError(
+                'Credit limit must be greater than zero.'
+            )
+
+        if value > 10000000:
+            raise serializers.ValidationError(
+                'Credit limit cannot exceed Rs. 1,00,00,000.'
+            )
+
+        return value                
