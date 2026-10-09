@@ -6,6 +6,8 @@ import api, { dashboardApi } from '../services/api'
 
 import ThemeToggle from '../components/ThemeToggle'
 
+import SpendingAnalytics from '../components/SpendingAnalytics'
+
 function Dashboard() {
   const navigate = useNavigate()
 
@@ -245,7 +247,9 @@ function Dashboard() {
                 </p>
               </div>
             </div>
-
+            <div className="mt-8">
+              <SpendingAnalytics />
+            </div>
             <div className="mt-8 bg-white border border-gray-200 rounded-2xl overflow-hidden transition-colors duration-300 dark:bg-slate-900 dark:border-slate-800">
               <div className="p-6 border-b border-gray-200 dark:border-slate-800">
                 <h3 className="text-xl font-bold">

@@ -1,8 +1,8 @@
 from decimal import Decimal
 
-from django.conf import settings
-from django.core.mail import send_mail
-from django.db.models import Sum
+from django.conf import settings # type: ignore
+from django.core.mail import send_mail # type: ignore
+from django.db.models import Sum # type: ignore
 
 
 def send_large_transaction_alert(transaction):
@@ -83,5 +83,34 @@ def send_card_blocked_alert(card):
         ),
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[user.email],
+        fail_silently=False,
+    )
+
+
+
+def send_fraud_alert(transaction):
+    user = transaction.user
+    card = transaction.card
+
+    reason = (
+        getattr(transaction, "fraud_reason", None)
+        or "Suspicious transaction activity was detected."
+    )
+
+    send_mail(
+        subject="URGENT: Suspicious Credit Card Transaction",
+        message=(
+            f"Hello {user.username},\n\n"
+            "Our system has flagged a transaction as potentially fraudulent.\n\n"
+            f"Transaction ID: {transaction.transaction_id}\n"
+            f"Amount: Rs. {transaction.amount}\n"
+            f"Card: {card.masked_card_number}\n"
+            f"Reason: {reason}\n"
+            f"Date: {transaction.created_at}\n\n"
+            "If you did not authorize this transaction, please contact "
+            "your bank immediately."
+        ),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[user.email] if user.email else [],
         fail_silently=False,
     )

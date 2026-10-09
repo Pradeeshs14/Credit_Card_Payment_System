@@ -43,6 +43,9 @@ services:
       - "8001:8001"
 
   frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     image: credit-card-frontend:latest
     container_name: credit-card-frontend
     restart: unless-stopped
